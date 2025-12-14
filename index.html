@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Particles – Fixed</title>
+  <style>
+    body { margin: 0; overflow-x: hidden; background: #000; }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+
+let scene, camera, renderer, sphere, uniforms, mouse = new THREE.Vector3();
+
+init();
+animate();
+
+function init() {
+
+    scene = new THREE.Scene();
+
+    camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
+    camera.position.z = 3;
+
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const count = 50000;
+    const positions = new Float32Array(count * 3);
+
+    for (let i = 0; i < count; i++) {
+        positions[i*3] = (Math.random() - 0.5) * 2;
+        positions[i*3+1] = (Math.random() - 0.5) * 2;
+        positions[i*3+2] = (Math.random() - 0.5) * 2;
+    }
+
+    const particleGeometry = new THREE.BufferGeometry();
+    particleGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+
+    uniforms = {
+        uTime: { value: 0.0 },
+        uMouse: { value: new THREE.Vector3(0,0,0) }
+    };
+
+    const material = new THREE.ShaderMaterial({
+        uniforms,
+        vertexShader: `
+            uniform vec3 uMouse;
+
+            void main() {
+                vec3 pos = position;
+
+                float dist = distance(pos, uMouse);
+                pos += normalize(pos - uMouse) * (0.15 / dist);
+
+                gl_PointSize = 1.0;   // kvadrat + sharik tam yox olur
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+            }
+        `,
+        fragmentShader: `
+            void main() {
+                // Hissəcik real piksel kimi görünür, heç bir forma yoxdur.
+                gl_FragColor = vec4(0.2, 0.6, 1.0, 1.0);
+            }
+        `,
+        transparent: true
+    });
+
+    sphere = new THREE.Points(particleGeometry, material);
+    scene.add(sphere);
+
+    // Mouse & touch
+    window.addEventListener("pointermove", (e) => {
+        const x = (e.clientX / window.innerWidth) * 2 - 1;
+        const y = -(e.clientY / window.innerHeight) * 2 + 1;
+        mouse.set(x, y, 0.5);
+        uniforms.uMouse.value = mouse;
+    });
+}
+
+function animate() {
+    uniforms.uTime.value += 0.01;
+    sphere.rotation.y += 0.002;
+    renderer.render(scene, camera);
+    requestAnimationFrame(animate);
+}
+
+</script>
+</body>
+</html>
