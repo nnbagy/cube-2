@@ -2,7 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Particles – Fixed</title>
+
+  <title>Cube 2 Preview Test</title>
+
+  <!-- Open Graph / WhatsApp / Facebook / Telegram Preview -->
+  <meta property="og:title" content="Cube 2 – Preview Test">
+  <meta property="og:description" content="GitHub public repo preview image test.">
+  <meta property="og:image" content="https://nnbagy.github.io/cube-2/3.png?v=10001">
+  <meta property="og:image:secure_url" content="https://nnbagy.github.io/cube-2/3.png?v=10001">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:url" content="https://nnbagy.github.io/cube-2/">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Preview -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Cube 2 – Preview Test">
+  <meta name="twitter:description" content="GitHub public repo preview image test.">
+  <meta name="twitter:image" content="https://nnbagy.github.io/cube-2/3.png?v=10001">
+
   <style>
     body { margin: 0; overflow-x: hidden; background: #000; }
     canvas { display: block; }
@@ -58,13 +77,12 @@ function init() {
                 float dist = distance(pos, uMouse);
                 pos += normalize(pos - uMouse) * (0.15 / dist);
 
-                gl_PointSize = 1.0;   // kvadrat + sharik tam yox olur
+                gl_PointSize = 1.0;
                 gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
             }
         `,
         fragmentShader: `
             void main() {
-                // Hissəcik real piksel kimi görünür, heç bir forma yoxdur.
                 gl_FragColor = vec4(0.2, 0.6, 1.0, 1.0);
             }
         `,
@@ -74,7 +92,6 @@ function init() {
     sphere = new THREE.Points(particleGeometry, material);
     scene.add(sphere);
 
-    // Mouse & touch
     window.addEventListener("pointermove", (e) => {
         const x = (e.clientX / window.innerWidth) * 2 - 1;
         const y = -(e.clientY / window.innerHeight) * 2 + 1;
