@@ -1,112 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
   <meta charset="UTF-8" />
 
-  <title>Cube 2 Preview Test</title>
+  <title>Ağıllı Flash Test</title>
 
-  <!-- Open Graph / WhatsApp / Facebook / Telegram Preview -->
-  <meta property="og:title" content="Cube 2 – Preview Test">
-  <meta property="og:description" content="GitHub public repo preview image test.">
-  <meta property="og:image" content="https://nnbagy.github.io/cube-2/3.png?v=10001">
-  <meta property="og:image:secure_url" content="https://nnbagy.github.io/cube-2/3.png?v=10001">
+  <!-- WhatsApp / Facebook / Telegram preview -->
+  <meta property="og:title" content="Ağıllı Flash">
+  <meta property="og:description" content="Windows 10/11 avtomatik quraşdırma sistemi">
+  <meta property="og:image" content="https://nnbagy.github.io/cube-2/3.png">
+  <meta property="og:image:secure_url" content="https://nnbagy.github.io/cube-2/3.png">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
   <meta property="og:url" content="https://nnbagy.github.io/cube-2/">
   <meta property="og:type" content="website">
 
-  <!-- Twitter Preview -->
+  <!-- Twitter / X preview -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Cube 2 – Preview Test">
-  <meta name="twitter:description" content="GitHub public repo preview image test.">
-  <meta name="twitter:image" content="https://nnbagy.github.io/cube-2/3.png?v=10001">
+  <meta name="twitter:title" content="Ağıllı Flash">
+  <meta name="twitter:description" content="Windows 10/11 avtomatik quraşdırma sistemi">
+  <meta name="twitter:image" content="https://nnbagy.github.io/cube-2/3.png">
 
   <style>
     body { margin: 0; overflow-x: hidden; background: #000; }
     canvas { display: block; }
   </style>
 </head>
-<body>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
-<script>
-
-let scene, camera, renderer, sphere, uniforms, mouse = new THREE.Vector3();
-
-init();
-animate();
-
-function init() {
-
-    scene = new THREE.Scene();
-
-    camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 0.1, 1000);
-    camera.position.z = 3;
-
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-
-    const count = 50000;
-    const positions = new Float32Array(count * 3);
-
-    for (let i = 0; i < count; i++) {
-        positions[i*3] = (Math.random() - 0.5) * 2;
-        positions[i*3+1] = (Math.random() - 0.5) * 2;
-        positions[i*3+2] = (Math.random() - 0.5) * 2;
-    }
-
-    const particleGeometry = new THREE.BufferGeometry();
-    particleGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-
-    uniforms = {
-        uTime: { value: 0.0 },
-        uMouse: { value: new THREE.Vector3(0,0,0) }
-    };
-
-    const material = new THREE.ShaderMaterial({
-        uniforms,
-        vertexShader: `
-            uniform vec3 uMouse;
-
-            void main() {
-                vec3 pos = position;
-
-                float dist = distance(pos, uMouse);
-                pos += normalize(pos - uMouse) * (0.15 / dist);
-
-                gl_PointSize = 1.0;
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-            }
-        `,
-        fragmentShader: `
-            void main() {
-                gl_FragColor = vec4(0.2, 0.6, 1.0, 1.0);
-            }
-        `,
-        transparent: true
-    });
-
-    sphere = new THREE.Points(particleGeometry, material);
-    scene.add(sphere);
-
-    window.addEventListener("pointermove", (e) => {
-        const x = (e.clientX / window.innerWidth) * 2 - 1;
-        const y = -(e.clientY / window.innerHeight) * 2 + 1;
-        mouse.set(x, y, 0.5);
-        uniforms.uMouse.value = mouse;
-    });
-}
-
-function animate() {
-    uniforms.uTime.value += 0.01;
-    sphere.rotation.y += 0.002;
-    renderer.render(scene, camera);
-    requestAnimationFrame(animate);
-}
-
-</script>
-</body>
-</html>
